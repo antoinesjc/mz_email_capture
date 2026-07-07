@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mandarin Zest — Free Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+  }
+
+  .widget {
+    background: #fff;
+    border: 1px solid #ecddd5;
+    border-radius: 16px;
+    padding: 1.5rem;
+    max-width: 480px;
+    width: 100%;
+  }
+
+  /* ── Step 1: form ── */
+  .step-form { display: block; }
+  .step-thanks { display: none; }
+
+  .label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #f37a48;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .email-input {
+    width: 100%;
+    border: 1.5px solid #ecddd5;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    color: #1c1c1c;
+    background: #fdfcfa;
+    outline: none;
+    transition: border-color 0.15s;
+    margin-bottom: 12px;
+  }
+  .email-input:focus { border-color: #f37a48; }
+  .email-input::placeholder { color: #aaa; }
+
+  .cta-btn {
+    width: 100%;
+    background: #f37a48;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-bottom: 12px;
+  }
+  .cta-btn:hover { background: #d95f2c; transform: translateY(-1px); }
+  .cta-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+  .disclaimer {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.5;
+  }
+  .disclaimer a { color: #f37a48; text-decoration: none; }
+
+  .error-msg {
+    font-size: 13px;
+    color: #c0392b;
+    margin-bottom: 10px;
+    display: none;
+  }
+
+  /* ── Step 2: thank you ── */
+  .thanks-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1c1c1c;
+    margin-bottom: 6px;
+  }
+  .thanks-sub {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #228b22;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 13px 22px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.15s;
+    width: 100%;
+    justify-content: center;
+  }
+  .download-btn:hover { background: #1a6b1a; }
+</style>
+</head>
+<body>
+
+<div class="widget">
+
+  <!-- STEP 1: Email form -->
+  <div class="step-form" id="stepForm">
+    <label class="label" for="emailInput">YOUR EMAIL ADDRESS</label>
+    <input
+      class="email-input"
+      id="emailInput"
+      type="email"
+      placeholder="you@example.com"
+      autocomplete="email"
+    >
+    <div class="error-msg" id="errorMsg">Please enter a valid email address.</div>
+    <button class="cta-btn" id="ctaBtn" onclick="submit()">
+      <!-- ── EDIT BUTTON TEXT BELOW ── -->
+      Get the free PDF →
+    </button>
+    <p class="disclaimer">
+      By submitting, you agree to receive occasional newsletters from Mandarin Zest.
+      <!-- Optional: <a href="https://mandarinzest.com/unsubscribe" target="_blank">Unsubscribe</a> anytime. -->
+      Unsubscribe anytime.
+    </p>
+  </div>
+
+  <!-- STEP 2: Thank you + download -->
+  <div class="step-thanks" id="stepThanks">
+    <div class="thanks-title">You're in! 🎉</div>
+    <p class="thanks-sub">
+      Thank you — your free guide is ready to download below.<br>
+      <!-- ── OPTIONAL: edit the message ── -->
+    </p>
+    <!-- ── REPLACE href WITH YOUR ACTUAL PDF LINK ── -->
+    <a class="download-btn" id="downloadBtn" href="YOUR_PDF_LINK_HERE" target="_blank" download>
+      ⬇ Download your free guide
+    </a>
+  </div>
+
+</div>
+
+<script>
+  // ══════════════════════════════════════════════════════════
+  //  CONFIGURATION — edit these two lines only
+  // ══════════════════════════════════════════════════════════
+
+  // 1. Your Google Apps Script web app URL (see instructions below)
+  var SHEET_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+
+  // 2. Your PDF direct download link (Google Drive, Dropbox, etc.)
+  var PDF_URL = 'YOUR_PDF_LINK_HERE';
+
+  // ══════════════════════════════════════════════════════════
+
+  // Set the PDF link on load
+  document.getElementById('downloadBtn').href = PDF_URL;
+
+  function submit() {
+    var email = document.getElementById('emailInput').value.trim();
+    var errEl = document.getElementById('errorMsg');
+    errEl.style.display = 'none';
+
+    // Basic validation
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.style.display = 'block';
+      return;
+    }
+
+    var btn = document.getElementById('ctaBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    // Send to Google Sheet
+    if (SHEET_URL && SHEET_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+      fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, source: window.location.href, timestamp: new Date().toISOString() })
+      }).catch(function(){});  // fire and forget — no-cors means we can't read the response
+    }
+
+    // Show thank you step
+    setTimeout(function() {
+      document.getElementById('stepForm').style.display = 'none';
+      document.getElementById('stepThanks').style.display = 'block';
+    }, 400);
+  }
+
+  // Allow Enter key
+  document.getElementById('emailInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submit();
+  });
+</script>
+
+</body>
+</html>
