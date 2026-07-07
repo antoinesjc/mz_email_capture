@@ -150,7 +150,7 @@
       <!-- ── OPTIONAL: edit the message ── -->
     </p>
     <!-- ── REPLACE href WITH YOUR ACTUAL PDF LINK ── -->
-    <a class="download-btn" id="downloadBtn" href="YOUR_PDF_LINK_HERE" target="_blank" download>
+    <a class="download-btn" id="downloadBtn" href="https://drive.google.com/uc?export=download&id=1d-bVoTZ0m06TiFjMVnXn3sB2ckvxvgQa" target="_blank" download>
       ⬇ Download your free guide
     </a>
   </div>
@@ -163,10 +163,10 @@
   // ══════════════════════════════════════════════════════════
 
   // 1. Your Google Apps Script web app URL (see instructions below)
-  var SHEET_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbxQ9ulZjJSkhY4pCT2ibiI1IqwCiDovcM9GGx2JQTai6XJlSOGGnAvZ8eNIseD2Wzs8Mw/exec';
 
   // 2. Your PDF direct download link (Google Drive, Dropbox, etc.)
-  var PDF_URL = 'YOUR_PDF_LINK_HERE';
+  var PDF_URL = 'https://drive.google.com/uc?export=download&id=1d-bVoTZ0m06TiFjMVnXn3sB2ckvxvgQa';
 
   // ══════════════════════════════════════════════════════════
 
@@ -189,7 +189,7 @@
     btn.textContent = 'Sending…';
 
     // Send to Google Sheet
-    if (SHEET_URL && SHEET_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+    if (SHEET_URL && SHEET_URL !== 'https://script.google.com/macros/s/AKfycbxQ9ulZjJSkhY4pCT2ibiI1IqwCiDovcM9GGx2JQTai6XJlSOGGnAvZ8eNIseD2Wzs8Mw/exec') {
       fetch(SHEET_URL, {
         method: 'POST',
         mode: 'no-cors',
