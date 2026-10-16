@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mandarin Zest: free beginner guides</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  body { font-family: 'Outfit', system-ui, sans-serif; color: #2a2420; padding: 4px; }
+
+  .widget {
+    background: #fff;
+    border-radius: 22px;
+    padding: 28px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 16px 40px rgba(42, 36, 32, 0.10);
+  }
+  h2 { font-size: 22px; font-weight: 800; margin-bottom: 16px; }
+  label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .email-input {
+    width: 100%;
+    border: 1.5px solid #d9c8bd;
+    border-radius: 12px;
+    padding: 13px 14px;
+    font-family: inherit;
+    font-size: 16px;
+    color: #2a2420;
+    background: #fff;
+    outline: none;
+    margin-bottom: 12px;
+  }
+  .email-input:focus { border-color: #f37a48; }
+  .error-msg { font-size: 13px; color: #b3261e; margin: -4px 0 10px; display: none; }
+  .cta-btn {
+    width: 100%;
+    background: #f37a48;
+    color: #2a2420;
+    border: none;
+    border-radius: 999px;
+    padding: 15px;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  .cta-btn:hover { background: #e2632f; }
+  .cta-btn:focus-visible { outline: 3px solid #4f7a94; outline-offset: 3px; }
+  .cta-btn:disabled { opacity: 0.7; cursor: default; }
+  .disclaimer { font-size: 13px; color: #6b5a50; line-height: 1.45; }
+</style>
+</head>
+<body>
+
+<form class="widget" id="form" novalidate>
+  <h2>Get both guides free</h2>
+  <label for="emailInput">Your email</label>
+  <input class="email-input" id="emailInput" type="email" placeholder="you@example.com" autocomplete="email" required>
+  <div class="error-msg" id="errorMsg" role="alert">Please enter a valid email address.</div>
+  <button class="cta-btn" id="ctaBtn" type="submit">Send me the roadmap + guide</button>
+  <p class="disclaimer">By submitting, you agree to receive occasional emails from Mandarin Zest. Unsubscribe anytime.</p>
+</form>
+
+<script>
+  // ══════════════════════════════════════════════════════════
+  //  CONFIGURATION
+  // ══════════════════════════════════════════════════════════
+
+  // Your Google Apps Script web app (same Google Sheet as before).
+  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbwPWbx4dg8r7HWMa_uMV-2ZH6Xis7VnzEWvUgVc8G3AUzY4lnrtaooCZGgsDrwHZ9VMYg/exec';
+
+  // The page people land on after leaving their email (it holds the download buttons).
+  var THANKS_URL = 'https://www.mandarinzest.com/start-here-thank-you';
+
+  // A label saved in the sheet, so you know which page the email came from.
+  var SOURCE = 'start-here';
+
+  // ══════════════════════════════════════════════════════════
+
+  var form = document.getElementById('form');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = document.getElementById('emailInput').value.trim();
+    var errEl = document.getElementById('errorMsg');
+    errEl.style.display = 'none';
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.style.display = 'block';
+      return;
+    }
+
+    var btn = document.getElementById('ctaBtn');
+    btn.disabled = true;
+    btn.textContent = 'One moment…';
+
+    // Save to the Google Sheet. keepalive lets the request finish even
+    // though we leave the page right after.
+    try {
+      fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          source: SOURCE + ' | ' + (document.referrer || window.location.href),
+          timestamp: new Date().toISOString()
+        })
+      }).catch(function () {});
+    } catch (err) {}
+
+    // Then open the thank-you page in place of the current page.
+    setTimeout(function () {
+      try { window.top.location.href = THANKS_URL; }
+      catch (err) { window.location.href = THANKS_URL; }
+    }, 600);
+  });
+</script>
+
+</body>
+</html>
