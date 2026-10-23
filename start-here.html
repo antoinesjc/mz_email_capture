@@ -113,6 +113,11 @@
       }).catch(function () {});
     } catch (err) {}
 
+    // Google Analytics: tell the Odoo page about the sign-up (no personal data). The page's <head> listener sends it to GA.
+
+    try { window.top.postMessage({ mz: 'track', ga: { event: 'generate_lead', params: { lead_source: 'start-here' } } }, '*'); } catch (err) {}
+
+
     // Then open the thank-you page in place of the current page.
     setTimeout(function () {
       try { window.top.location.href = THANKS_URL; }
